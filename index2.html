@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>360 Experience</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <script src="https://aframe.io/releases/1.5.0/aframe.min.js"></script>
+    <style>
+      body { margin: 0; overflow: hidden; font-family: sans-serif; }
+      #overlay {
+        position: absolute; inset: 0;
+        background: rgba(0,0,0,0.85);
+        color: white; display: flex;
+        align-items: center; justify-content: center;
+        flex-direction: column; z-index: 10;
+      }
+      #startBtn {
+        margin-top: 20px; padding: 12px 24px;
+        font-size: 18px; border: none;
+        border-radius: 8px; background: #007aff; color: white;
+      }
+    </style>
+  </head>
+
+  <body>
+    <!-- Lobby overlay -->
+    <div id="overlay">
+      <h1>Be Ready</h1>
+      <button id="startBtn">Start Experience</button>
+    </div>
+
+    <!-- Scene -->
+    <a-scene id="scene" vr-mode-ui="enabled: true" embedded="false">
+      <a-assets>
+        <img id="scene1" src="scene1.jpg">
+        <img id="scene2" src="scene2.jpg">
+        <audio id="voice1" src="voice1.mp3" preload="auto" playsinline></audio>
+        <audio id="voice2" src="voice2.mp3" preload="auto" playsinline></audio>
+      </a-assets>
+
+      <!-- Start rotated 90° left -->
+      <a-sky id="sky" src="#scene1" rotation="0 -90 0"></a-sky>
+    </a-scene>
+
+    <script>
+      const sceneEl = document.getElementById("scene");
+      const overlay = document.getElementById("overlay");
+      const startBtn = document.getElementById("startBtn");
+      let skyEl = document.getElementById("sky");
+      const voice1 = document.getElementById("voice1");
+      const voice2 = document.getElementById("voice2");
+
+      // iOS unlock trick – pre-play/pause both audios
+      function unlockAudio() {
+        voice1.play().then(() => voice1.pause());
+        voice2.play().then(() => voice2.pause());
+      }
+
+      // Rebind references when entering VR
+      sceneEl.addEventListener('enter-vr', () => {
+        skyEl = document.getElementById("sky");
+        console.log("Entered VR mode – refreshed references");
+      });
+
+      async function playExperience() {
+        overlay.style.display = "none";
+
+        // Play voice1 + scene1
+        skyEl.setAttribute("src", "#scene1");
+        voice1.currentTime = 0;
+        await voice1.play();
+
+        // When voice1 ends, switch to scene2
+        voice1.addEventListener("ended", () => {
+          setTimeout(() => {
+            skyEl.setAttribute("src", "#scene2");
+
+            // Attempt to play automatically; fallback for iOS tap
+            voice2.currentTime = 0;
+            voice2.play().catch(() => {
+              window.addEventListener("touchstart", () => voice2.play(), { once: true });
+            });
+          }, 2000);
+        });
+
+        // When voice2 ends, reset to lobby
+        voice2.addEventListener("ended", () => {
+          setTimeout(() => {
+            overlay.style.display = "flex";
+            skyEl.setAttribute("src", "#scene1");
+          }, 2000);
+        });
+      }
+
+      startBtn.addEventListener("click", async () => {
+        unlockAudio(); // important for iOS
+
+        // Enter VR if not already
+        if (!sceneEl.is("vr-mode")) {
+          try {
+            await sceneEl.enterVR();
+          } catch (e) {
+            console.warn("VR entry not available:", e);
+          }
+        }
+
+        playExperience();
+      });
+    </script>
+  </body>
+</html>
