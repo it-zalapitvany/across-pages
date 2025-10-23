@@ -38,6 +38,7 @@ AFRAME.registerComponent('play-both-on-click', {
             const voice2 = document.getElementById("voice2");
 
             const skyEl = document.getElementById("sky");
+            skyEl.object3D.visible = true
             skyEl.setAttribute("src", "#scene1");
             await fadeIn();
             console.log("Scene 1 showing");
@@ -57,8 +58,8 @@ AFRAME.registerComponent('play-both-on-click', {
             voice2.play();
             await new Promise(resolve => voice2.addEventListener("ended", resolve));
             isPlaying = false; 
+            skyEl.object3D.visible = false
             console.log("set isPlaying to false")
-            window.location.reload();
         }
 
         await playExperience()
