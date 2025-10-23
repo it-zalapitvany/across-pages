@@ -27,10 +27,10 @@ AFRAME.registerComponent('play-both-on-click', {
         async function playExperience() {
             console.log('play experience clicked')
 
-            if (this.isPlaying) {
-                console.log('Already playing experience — ignoring click.');
-                return; // prevent new playback while one is running
-            }
+            // if (this.isPlaying) {
+            //     console.log('Already playing experience — ignoring click.');
+            //     return; // prevent new playback while one is running
+            // }
 
             this.isPlaying = true;
 
