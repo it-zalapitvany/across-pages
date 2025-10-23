@@ -58,6 +58,7 @@ AFRAME.registerComponent('play-both-on-click', {
             await new Promise(resolve => voice2.addEventListener("ended", resolve));
             isPlaying = false; 
             console.log("set isPlaying to false")
+            window.location.reload();
         }
 
         await playExperience()
