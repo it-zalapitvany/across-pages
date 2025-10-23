@@ -2,6 +2,7 @@
 AFRAME.registerComponent('play-both-on-click', {
     init: function () {
         this.onClick = this.onClick.bind(this);
+        this.isPlaying = false
     },
     play: function () {
         window.addEventListener('click', this.onClick);
@@ -9,23 +10,60 @@ AFRAME.registerComponent('play-both-on-click', {
     pause: function () {
         window.removeEventListener('click', this.onClick);
     },
-    onClick: function (evt) {
+    async onClick(evt) {
+
         console.log('play-both-on-click clicked')
-        const video1 = document.querySelector('#video');
-        const video2 = document.querySelector('#video2');
 
+        async function fadeOut() {
+            //fade.style.opacity = "1";
+            return new Promise(resolve => setTimeout(resolve, 1000));
+        }
 
-        // Show the videosphere (if hidden)
-        const sphere = document.querySelector('a-videosphere');
-        sphere.setAttribute('src', '#video')
-        sphere.setAttribute('visible', true);
+        async function fadeIn() {
+            // fade.style.opacity = "0";
+            return new Promise(resolve => setTimeout(resolve, 1000));
+        }
 
-        // Play both videos
-        video1.play();
-        video1.addEventListener('ended', function () {
-            console.log('video1 ended, starting video2');
-            sphere.setAttribute('src', '#video2'); // switch to video2 texture
-            video2.play();
-        });
+        async function playExperience() {
+            console.log('play experience clicked')
+
+            if (this.isPlaying) {
+                console.log('Already playing experience — ignoring click.');
+                return; // prevent new playback while one is running
+            }
+
+            this.isPlaying = true;
+
+            const voice1 = document.getElementById("voice1");
+            const voice2 = document.getElementById("voice2");
+
+            const skyEl = document.getElementById("sky");
+            skyEl.setAttribute("src", "#scene1");
+            await fadeIn();
+            console.log("Scene 1 showing");
+
+            voice1.play();
+
+            await new Promise(resolve => voice1.addEventListener("ended", resolve));
+
+            await new Promise(resolve => {
+                skyEl.setAttribute("src", "#scene2");
+                skyEl.addEventListener("materialtextureloaded", () => {
+                    console.log("Scene 2 texture loaded");
+                    resolve();
+                }, { once: true });
+            });
+
+            voice2.play();
+            await new Promise(resolve => voice2.addEventListener("ended", resolve));
+            isPlaying = false; 
+            console.log("set isPlaying to false")
+        }
+
+        await playExperience()
+     
+
     }
+
+
 });
