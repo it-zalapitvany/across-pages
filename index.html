@@ -28,23 +28,23 @@
     }
   </style>
   <script type="text/javascript">
-    const scene = document.querySelector('a-scene');
-    if (scene.hasLoaded) {
-        run();
-    } else {
-        scene.addEventListener('renderstart', run);
-    }
-    function run() {
-        scene.enterVR();
-    }
-</script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const scene = document.querySelector('a-scene');
+      scene?.addEventListener('loaded', async () => {
+        if (navigator.xr?.isSessionSupported) {
+          const ok = await navigator.xr.isSessionSupported('immersive-vr');
+          if (ok && scene.enterVR) scene.enterVR(); // might still need a user gesture outside PWA
+        }
+      });
+    });
+  </script>
 </head>
 
 <body>
   <div id="blackout"></div>
 
-  <a-scene id="scene"  xr-mode-ui="enabled: true"
-  webxr="optionalFeatures: local-floor, bounded-floor; requiredFeatures: local-floor">
+  <a-scene id="scene" xr-mode-ui="enabled: true"
+    webxr="optionalFeatures: local-floor, bounded-floor; requiredFeatures: local-floor">
     <a-assets>
       <img id="scene1" src="scene1.jpg" crossorigin="anonymous">
       <img id="scene2" src="scene2.jpg" crossorigin="anonymous">
@@ -99,7 +99,7 @@
 
     function playExperience() {
 
-      vrStartBtn.setAttribute("visible", "false");  
+      vrStartBtn.setAttribute("visible", "false");
       vrStartBtn.classList.remove("clickable");
 
       fadeToBlack(() => {
