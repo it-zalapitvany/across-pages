@@ -40,6 +40,13 @@
       if (!scene) return console.warn('No A-Frame scene found');
       scene.addEventListener('loaded', () => scene.enterVR()?.catch(console.warn), { once: true });
     });
+    (async () => {
+      console.log('navigator.xr =', !!navigator.xr);
+      if (navigator.xr?.isSessionSupported) {
+        console.log('immersive-vr supported =',
+          await navigator.xr.isSessionSupported('immersive-vr'));
+      }
+    })();
 
   </script>
 
