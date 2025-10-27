@@ -3,7 +3,10 @@
 
 <head>
   <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no, viewport-fit=cover">
+
   <title>VR Experience</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <script src="https://aframe.io/releases/1.5.0/aframe.min.js"></script>
   <style>
     body {
@@ -29,7 +32,8 @@
 <body>
   <div id="blackout"></div>
 
-  <a-scene id="a-scene" xr-mode-ui="enabled: true">
+  <a-scene id="scene"  xr-mode-ui="enabled: true"
+  webxr="optionalFeatures: local-floor, bounded-floor; requiredFeatures: local-floor">
     <a-assets>
       <img id="scene1" src="scene1.jpg" crossorigin="anonymous">
       <img id="scene2" src="scene2.jpg" crossorigin="anonymous">
@@ -56,97 +60,68 @@
   </a-scene>
 
   <script>
-  const sceneEl   = document.getElementById("a-scene");
-  const skyEl     = document.getElementById("sky");
-  const lobbySky  = document.getElementById("lobbySky");
-  const vrStartBtn= document.getElementById("vrStartBtn");
-  const blackout  = document.getElementById("blackout");
-  const voice1    = document.getElementById("voice1");
-  const voice2    = document.getElementById("voice2");
+    const skyEl = document.getElementById("sky");
+    const lobbySky = document.getElementById("lobbySky");
+    const vrStartBtn = document.getElementById("vrStartBtn");
+    const cursor = document.getElementById("cursor");
+    const blackout = document.getElementById("blackout");
+    const voice1 = document.getElementById("voice1");
+    const voice2 = document.getElementById("voice2");
 
-  // Optional: log support on Quest
-  (async () => {
-    console.log('navigator.xr =', !!navigator.xr);
-    if (navigator.xr?.isSessionSupported) {
-      console.log('immersive-vr supported =',
-        await navigator.xr.isSessionSupported('immersive-vr'));
-    }
-  })();
-
-  function fadeToBlack(callback) {
-    blackout.style.opacity = 1;
-    setTimeout(() => { callback(); blackout.style.opacity = 0; }, 1000);
-  }
-
-  function resetExperience() {
-    skyEl.setAttribute("visible", "false");
-    lobbySky.setAttribute("visible", "true");
-    vrStartBtn.setAttribute("visible", "true");
-    vrStartBtn.classList.add("clickable");
-    voice1.currentTime = 0; voice2.currentTime = 0;
-  }
-
-  function startExperienceAfterEnterVR() {
-    // we are in immersive now — run your flow
-    vrStartBtn.setAttribute("visible", "false");
-    vrStartBtn.classList.remove("clickable");
-
-    fadeToBlack(() => {
-      lobbySky.setAttribute("visible", "false");
-      skyEl.setAttribute("visible", "true");
-      skyEl.setAttribute("src", "#scene1");
-      skyEl.setAttribute("rotation", "0 -90 0");
-      voice1.play();
-    });
-
-    voice1.onended = () => {
+    function fadeToBlack(callback) {
+      blackout.style.opacity = 1;
       setTimeout(() => {
-        fadeToBlack(() => {
-          skyEl.setAttribute("src", "#scene2");
-          skyEl.setAttribute("rotation", "0 -90 0");
-          voice2.play();
-        });
+        callback();
+        blackout.style.opacity = 0;
       }, 1000);
-    };
-
-    voice2.onended = () => {
-      setTimeout(() => {
-        fadeToBlack(() => {
-          resetExperience();
-          console.log("Returned to lobby in VR");
-        });
-      }, 1000);
-    };
-  }
-
-  // 1) Use the Start button as the user gesture to enter XR
-  vrStartBtn.addEventListener("click", async () => {
-    try {
-      // Some browsers still need a gesture to start audio; this click counts.
-      // Enter immersive VR first:
-      await sceneEl.enterVR(); // If this resolves, we left the panel.
-      // Either wait for the event, or continue right away:
-      // startExperienceAfterEnterVR();
-    } catch (e) {
-      console.warn("enterVR() failed:", e);
-      // Fallback: run in magic-window mode
-      startExperienceAfterEnterVR();
     }
-  });
 
-  // 2) When we actually enter VR, then begin the content
-  sceneEl.addEventListener('enter-vr', () => {
-    console.log('Entered immersive VR');
-    startExperienceAfterEnterVR();
-  });
+    function resetExperience() {
+      // Show lobby sky and button
+      skyEl.setAttribute("visible", "false");
+      lobbySky.setAttribute("visible", "true");
+      vrStartBtn.setAttribute("visible", "true");
+      vrStartBtn.classList.add("clickable");
+      voice1.currentTime = 0;
+      voice2.currentTime = 0;
+    }
 
-  // (Optional) Handle exit back to panel
-  sceneEl.addEventListener('exit-vr', () => {
-    console.log('Exited VR');
-    resetExperience();
-  });
-</script>
+    function playExperience() {
 
+      vrStartBtn.setAttribute("visible", "false");  
+      vrStartBtn.classList.remove("clickable");
+
+      fadeToBlack(() => {
+        lobbySky.setAttribute("visible", "false");
+        skyEl.setAttribute("visible", "true");
+        skyEl.setAttribute("src", "#scene1");
+        skyEl.setAttribute("rotation", "0 -90 0");
+        voice1.play();
+      });
+
+      voice1.onended = () => {
+        setTimeout(() => {
+          fadeToBlack(() => {
+            skyEl.setAttribute("src", "#scene2");
+            skyEl.setAttribute("rotation", "0 -90 0");
+            voice2.play();
+          });
+        }, 1000);
+      };
+
+      voice2.onended = () => {
+        setTimeout(() => {
+          fadeToBlack(() => {
+            resetExperience();
+            console.log("Returned to lobby in VR");
+          });
+        }, 1000);
+      };
+    }
+
+    // Click listener for 3D button
+    vrStartBtn.addEventListener("click", playExperience);
+  </script>
 </body>
 
 </html>
