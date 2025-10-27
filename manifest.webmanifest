@@ -13,6 +13,7 @@
    "sizes": "512x512"
  }
   ],
-  "start_url": "https://it-zalapitvany.github.io/across-pages/index.html",
-  "scope": "https://it-zalapitvany.github.io/"
+  "start_url": "https://it-zalapitvany.github.io/across-pages/index.html?fullscreen=true",
+  "scope": "https://it-zalapitvany.github.io/",
+  "display": "fullscreen"
 }
