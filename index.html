@@ -27,24 +27,19 @@
       transition: opacity 1s ease-in-out;
     }
   </style>
-  <script type="text/javascript">
-    document.addEventListener('DOMContentLoaded', () => {
-      const scene = document.querySelector('a-scene');
-      scene?.addEventListener('loaded', async () => {
-        if (navigator.xr?.isSessionSupported) {
-          const ok = await navigator.xr.isSessionSupported('immersive-vr');
-          if (ok && scene.enterVR) scene.enterVR(); // might still need a user gesture outside PWA
-        }
-      });
+  <!-- <script type="text/javascript">
+    window.addEventListener('DOMContentLoaded', () => {
+      const scene = (window.AFRAME && AFRAME.scenes && AFRAME.scenes[0]) || document.querySelector('a-scene');
+      if (!scene) return console.warn('No A-Frame scene found');
+      scene.addEventListener('loaded', () => scene.enterVR()?.catch(console.warn), { once: true });
     });
-  </script>
+  </script> -->
 </head>
 
 <body>
   <div id="blackout"></div>
 
-  <a-scene id="scene" xr-mode-ui="enabled: true"
-    webxr="optionalFeatures: local-floor, bounded-floor; requiredFeatures: local-floor">
+  <a-scene id="scene" xr-mode-ui="enabled: true">
     <a-assets>
       <img id="scene1" src="scene1.jpg" crossorigin="anonymous">
       <img id="scene2" src="scene2.jpg" crossorigin="anonymous">
