@@ -1,0 +1,19 @@
+{
+  "short_name": "PWA Name",
+  "name": "Full name of your PWA",
+  "icons": [
+ {
+   "src": "/images/favicon-192x192.png",
+   "type": "image/png",
+   "sizes": "192x192"
+ },
+ {
+   "src": "/images/favicon-512x512.png",
+   "type": "image/png",
+   "sizes": "512x512"
+ }
+  ],
+  "start_url": "https://it-zalapitvany.github.io/across-pages/index.html",
+  "scope": "https://it-zalapitvany.github.io/",
+  "display": "standalone"
+}
