@@ -3,10 +3,7 @@
 
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no, viewport-fit=cover">
-
   <title>VR Experience</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <script src="https://aframe.io/releases/1.5.0/aframe.min.js"></script>
   <style>
     body {
@@ -27,29 +24,6 @@
       transition: opacity 1s ease-in-out;
     }
   </style>
-  <!-- <script type="text/javascript">
-    window.addEventListener('DOMContentLoaded', () => {
-      const scene = (window.AFRAME && AFRAME.scenes && AFRAME.scenes[0]) || document.querySelector('a-scene');
-      if (!scene) return console.warn('No A-Frame scene found');
-      scene.addEventListener('loaded', () => scene.enterVR()?.catch(console.warn), { once: true });
-    });
-  </script> -->
-  <script>
-    window.addEventListener('DOMContentLoaded', () => {
-      const scene = (window.AFRAME && AFRAME.scenes && AFRAME.scenes[0]) || document.querySelector('a-scene');
-      if (!scene) return console.warn('No A-Frame scene found');
-      scene.addEventListener('loaded', () => scene.enterVR()?.catch(console.warn), { once: true });
-    });
-    (async () => {
-      console.log('navigator.xr =', !!navigator.xr);
-      if (navigator.xr?.isSessionSupported) {
-        console.log('immersive-vr supported =',
-          await navigator.xr.isSessionSupported('immersive-vr'));
-      }
-    })();
-
-  </script>
-
 </head>
 
 <body>
