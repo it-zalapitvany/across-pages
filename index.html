@@ -34,12 +34,21 @@
       scene.addEventListener('loaded', () => scene.enterVR()?.catch(console.warn), { once: true });
     });
   </script> -->
+  <script>
+    window.addEventListener('DOMContentLoaded', () => {
+      const scene = (window.AFRAME && AFRAME.scenes && AFRAME.scenes[0]) || document.querySelector('a-scene');
+      if (!scene) return console.warn('No A-Frame scene found');
+      scene.addEventListener('loaded', () => scene.enterVR()?.catch(console.warn), { once: true });
+    });
+
+  </script>
+
 </head>
 
 <body>
   <div id="blackout"></div>
 
-  <a-scene id="scene" xr-mode-ui="enabled: true">
+  <a-scene id="a-scene" xr-mode-ui="enabled: true">
     <a-assets>
       <img id="scene1" src="scene1.jpg" crossorigin="anonymous">
       <img id="scene2" src="scene2.jpg" crossorigin="anonymous">
