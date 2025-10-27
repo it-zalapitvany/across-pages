@@ -27,6 +27,17 @@
       transition: opacity 1s ease-in-out;
     }
   </style>
+  <script type="text/javascript">
+    const scene = document.querySelector('a-scene');
+    if (scene.hasLoaded) {
+        run();
+    } else {
+        scene.addEventListener('renderstart', run);
+    }
+    function run() {
+        scene.enterVR();
+    }
+</script>
 </head>
 
 <body>
